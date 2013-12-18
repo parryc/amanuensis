@@ -1,0 +1,19 @@
+html(lang='en')
+  head
+    title= title 
+    meta(name="viewport",content="width=device-width, initial-scale=1.0", charset="UTF-8")
+
+    block stylesheets
+      link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    div
+    | HI -
+    a(href="logout") 
+      | logout
+      | #{user}
+    br
+    - if (typeof(user) !== 'undefined'){
+      | #{user.username}
+    -}
+
+    block auth

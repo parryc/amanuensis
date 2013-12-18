@@ -1,0 +1,17 @@
+{
+  "name": "amanuensis",
+  "version": "0.1.0",
+  "dependencies": {
+    "express": "~3.4.7",
+    "jade": "~0.35.0",
+    "stylus": "~0.41.3",
+    "socket.io": "~0.9.16",
+    "mongoose": "~3.8.2",
+    "passport": "~0.1.17",
+    "passport-http": "~0.2.2"
+  },
+  "engines": {
+    "node": "*",
+    "npm": "*"
+  }
+}
