@@ -1,0 +1,32 @@
+extends index
+
+block auth
+  | #{message}
+  form.offset1.form-horizontal(action="/add", method="post")
+    input(type='hidden', name='_csrf', value="#{csrf_token}")
+
+    .control-group
+      label.control-label(for='entry') Entry
+      .controls
+        input#entry(type='text', name="entry", placeholder='Entry')
+
+    .control-group
+      label.control-label(for='meaning') Meaning
+      .controls
+        input#meaning(type='meaning', name="meaning", placeholder='Meaning')
+
+    .control-group
+      label.control-label(for='source') Source
+      .controls
+        input#source(type='source', name="source", placeholder='Source')
+
+    .control-group
+      label.control-label(for='tags') Tags
+      .controls
+        input#tags(type='tags', name="tags", placeholder='Tags')
+
+    .form-actions
+      button.btn.btn-primary(type='submit') Sign up
+      &nbsp;
+      | or&nbsp;
+      a.show-login(href="/login") login

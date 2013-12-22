@@ -8,8 +8,71 @@ var app = express(),
   io = require('socket.io').listen(server),
   jade = require('jade'),
   passport = require('passport'),
-  DigestStrategy = require('passport-http').DigestStrategy,
-  mongoose = require('mongoose');
+  LocalStrategy = require('passport-local').Strategy,
+  mongoose = require('mongoose'),
+  bcrypt = require('bcrypt'),
+  SALT_WORK_FACTOR = 10;
+
+
+/********************
+DEFINING THE DATABASE FOR GREAT SUCCESS!!
+********************/
+mongoose.connect('mongodb://localhost:27017/amanuensis', function(err){
+  if (err)
+    console.log("Error, Will Robinson, Error!: "+err);
+});
+
+Schema = mongoose.Schema;
+ObjectId = mongoose.Types.ObjectId;
+
+
+var userSchema = new Schema({
+  username: String,
+  password: String,
+  entries: [{ type: Schema.Types.ObjectId, ref: 'Entry'}],
+  _registrationDate: { type: Date, default: Date.now }
+});
+
+//Add hashing and salting 
+//From: http://danielstudds.com/setting-up-passport-js-secure-spa-part-1/
+userSchema.pre('save', function(next) {
+    var user = this;
+ 
+    if(!user.isModified('password')) return next();
+ 
+    bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+        if(err) return next(err);
+ 
+        bcrypt.hash(user.password, salt, function(err, hash) {
+            if(err) return next(err);
+            user.password = hash;
+            next();
+        });
+    });
+});
+ 
+// Password verification
+userSchema.methods.comparePassword = function(candidatePassword, cb) {
+    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+        if(err) return cb(err);
+        cb(null, isMatch);
+    });
+};
+
+
+var User = mongoose.model('User',userSchema);
+
+var entrySchema = new Schema({
+  entry: String,
+  meaning: String,
+  source: String,
+  slug: String,
+  tags: [{type: String}],
+  user: { type: Schema.Types.ObjectId, ref: 'User'},
+  _creationDate: { type: Date, default: Date.now }
+});
+var Entry = mongoose.model('Entry',entrySchema);
+
 
 
 //  db = mongoose.createConnection('mongodb://localhost/haardvark');
@@ -41,16 +104,6 @@ app.configure(function() {
   app.use(app.router);
 });
 
-// app.configure(function(){
-//   app.set('views', __dirname + '/views');
-//   app.set('view engine', 'jade');
-//   app.use(express.bodyParser());
-//   app.use(express.methodOverride());
-//   app.use(express.session({secret: 'mima', key: 'express.sid'}));
-//   app.use(require('stylus').middleware({ src: __dirname + '/public' }));
-//   app.use(app.router);
-//   app.use(express.static(__dirname + '/public'));
-// });
 
 app.configure('development', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -61,19 +114,21 @@ app.configure('production', function() {
 });
 
 
-//Set up Digest authentication - taken from documentation
-passport.use(new DigestStrategy({ qop: 'auth' },
-  function(username, done) {
-    User.findOne({ username: username }, function (err, user) {
-      if (err) { return done(err); }
-      if (!user) { return done(null, false); }
-      return done(null, user, user.password);
+//From http://danielstudds.com/setting-up-passport-js-secure-spa-part-1/
+passport.use(new LocalStrategy(function(username, password, done) {
+  User.findOne({ username: username }, function(err, user) {
+    if (err) { return done(err); }
+    if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
+    user.comparePassword(password, function(err, isMatch) {
+      if (err) return done(err);
+      if(isMatch) {
+        return done(null, user);
+      } else {
+        return done(null, false, { message: 'Invalid password' });
+      }
     });
-  },
-  function(params, done) {
-    done(null, true);
-  }
-));
+  });
+}));
 
 passport.serializeUser(function(user, done) {
   done(null, user.id);
@@ -84,38 +139,6 @@ passport.deserializeUser(function(id, done) {
     done(err, user);
   });
 });
-
-
-/********************
-DEFINING THE DATABASE FOR GREAT SUCCESS!!
-********************/
-mongoose.connect('mongodb://localhost:27017/amanuensis', function(err){
-  if (err)
-    console.log("Error, Will Robinson, Error!: "+err);
-});
-
-Schema = mongoose.Schema;
-ObjectId = mongoose.Types.ObjectId;
-
-
-var userSchema = new Schema({
-  username: String,
-  password: String,
-  _registrationDate: { type: Date, default: Date.now }
-});
-
-var User = mongoose.model('User',userSchema);
-
-var entrySchema = new Schema({
-  entry: String,
-  meaning: String,
-  source: String,
-  tags: [{type: String}],
-  user: { type: Schema.Types.ObjectId, ref: 'User'},
-  _creationDate: { type: Date, default: Date.now }
-});
-var Entry = mongoose.model('Entry',entrySchema);
-
 
 
 /********************
@@ -184,40 +207,101 @@ app.get('/login', function(req, res){
     user: {username: 'Stranger'}
   });
 });
-app.post('/login', function(req, res ) {
-  User.findOne({username: req.body.username}, function(err, user){
-    req.login(user, function(err){
-      if(err) return console.log(err);
-      console.log(user);
-      return res.redirect('/');
-    });
-  });
-});
-
-app.get('/add', checkAuth,
+app.post('/login',
+  passport.authenticate('local'),
   function(req, res) {
-    console.log(req.user);
-    res.json(req.user);
+    res.redirect('/');
+  });
+
+
+app.get('/add', ensureAuthenticated,
+  function(req, res) {
+    res.render('add.jade', {
+      'title': 'Amanuens.is - Add'
+    });
+  }
+);
+app.post('/add', ensureAuthenticated,
+  function(req, res) {
+    var user = req.user,
+        newEntry = new Entry(req.body);
+
+    newEntry.tags = req.body.tags.split(',').map(function(tag){return tag.trim();});
+    newEntry.slug = req.body.entry.split(" ").slice(0,5).join('-')+'-'+(+new Date()).toString(36);
+    newEntry.user = user;
+
+    console.log(newEntry);
+
+    newEntry.save(function (err) {
+      if (err) {
+        return res.render('/add', {
+          error: utils.errors(err.errors),
+          title: user.username
+        });
+      }
+
+      User.findOneAndUpdate({username: user.username},{$push: {entries: newEntry}}, function(err, user){
+        if(err){
+          return res.render('/error');
+        }
+
+        return res.redirect('/'+user.username);
+
+      });
+    });
   }
 );
 
 app.get('/:id', function(req, res) {
-  res.render('index.jade', {
-      'title': 'Amanuens.is - Id'
+  User.findOne({username: req.params.id}).populate("entries").exec(function(err, user){
+    if(!user || err) {
+      res.redirect('/');
+    } else {
+      res.render('user.jade', {
+        title: 'Amanuens.is - Id',
+        user: user
+      });
+    }
   });
 });
 
 
 app.get('/:id/:entryId', function(req, res) {
-  res.render('index.jade', {
-      'title': 'Amanuens.is - Entry'
+  User.findOne({username: req.params.id}).populate('entries').exec(function(err, user){
+    Entry.findOne({slug: req.params.slug}, function(err, entry){
+      res.render('entry.jade', {
+        title: 'Amanuens.is - Entry',
+        entry: entry,
+        user: user
+      });
+    });
   });
 });
 
-app.get('/:id/:entryId/edit', checkAuth,
+app.get('/:id/:entryId/edit', ensureAuthenticated,
   function(req, res) {
     res.json(req.user);
 });
+
+//From stack overflowwww
+// app.use(function(req, res, next){
+//   res.status(404);
+
+//   // respond with html page
+//   if (req.accepts('html')) {
+//     res.render('404', { url: req.url });
+//     return;
+//   }
+
+//   // respond with json
+//   if (req.accepts('json')) {
+//     res.send({ error: 'Not found' });
+//     return;
+//   }
+
+//   // default to plain-text. send()
+//   res.type('txt').send('Not found');
+// });
 
 
 
@@ -243,10 +327,7 @@ function acceptsHtml(header) {
   return false;
 }
 
-function checkAuth(req, res, next) {
-  if (!req.user || req.user.username !== req.params.id) {
-    res.send('You are not authorized to view this page');
-  } else {
-    next();
-  }
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/login');
 }
