@@ -1,22 +1,11 @@
-extends index
+form(action="/signup", method="post")
+  input(type='hidden', name='_csrf', value="#{csrf_token}")
 
-block auth
-  | #{message}
-  form.offset1.form-horizontal(action="/signup", method="post")
-    input(type='hidden', name='_csrf', value="#{csrf_token}")
-
-    .control-group
-      label.control-label(for='username') Username
-      .controls
-        input#username(type='text', name="username", placeholder='Username', value=user.username)
-
-    .control-group
-      label.control-label(for='password') Password
-      .controls
-        input#password(type='password', name="password", placeholder='Password')
-
-    .form-actions
-      button.btn.btn-primary(type='submit') Sign up
-      &nbsp;
-      | or&nbsp;
-      a.show-login(href="/login") login
+  label(for='username') Username
+  input#username(type='text', name="username", placeholder='Username')
+  br
+  label(for='password') Password
+  input#password(type='password', name="password", placeholder='Password')
+  br
+  button(type='submit') Sign Up
+  a(href="/login") Login

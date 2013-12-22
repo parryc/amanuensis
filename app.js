@@ -100,7 +100,7 @@ app.configure(function() {
   app.use(express.session({ secret: 'wodemima' }));
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(require('stylus').middleware({ src: __dirname + '/public/stylesheets' }));
+  app.use(require('stylus').middleware({ src: __dirname + '/public/stylesheets/', dest: __dirname + '/public/stylesheets/' }));
   app.use(app.router);
 });
 
@@ -148,9 +148,12 @@ Application, bitches!
 
 app.get('/', function(req, res) {
   var user = (req.user) ? req.user : undefined;
-  res.render('index', {
-      'title': 'Amanuens.is',
-      'user':user
+  Entry.find().sort({_creationDate:-1}).limit(10).exec(function(err, entries){
+    res.render('index', {
+      title: 'Amanuens.is',
+      user:user,
+      entries: entries
+    });
   });
 });
 
@@ -204,7 +207,7 @@ app.get('/logout', function(req, res ) {
 
 app.get('/login', function(req, res){
   res.render('login', {
-    user: {username: 'Stranger'}
+    user: undefined
   });
 });
 app.post('/login',

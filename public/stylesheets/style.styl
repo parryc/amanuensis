@@ -1,0 +1,54 @@
+@import 'grid'
+
+article
+	column(8)
+	margin-bottom 75px
+	width 66%
+
+aside
+	column(4)
+	height 100%
+	// max-width 500px
+	min-width 300px
+	width 20%
+
+body
+	margin-top 15px
+	font-size 22px
+	line-height 1.4
+ 	font-family "PT Serif","Helvetica Neue", Helvetica, Arial, sans-serif
+
+body,aside
+	padding 15px 15px 15px 10px
+
+button
+	border-radius 5px
+	background #555
+	border none
+
+header
+	width 75%
+	margin 0 auto
+	background red
+	font-size 3em
+	h1
+		font-size 4em
+
+img
+	margin 0 auto
+	display block
+
+label
+	margin-right 15px
+
+.right
+	float right
+
+@media screen and (max-width: 960px)
+	article
+		// column(12)
+		width 90%
+	aside
+		min-width 95%
+	header
+		font-size 1em

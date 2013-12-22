@@ -1,0 +1,84 @@
+body {
+  width: 100%;
+  *zoom: 1;
+}
+body:before,
+body:after {
+  content: "";
+  display: table;
+}
+body:after {
+  clear: both;
+}
+article {
+  display: inline;
+  float: left;
+  overflow: hidden;
+  width: 620px;
+  margin: 0 10px;
+  *width: 620px -correction;
+  *margin: 0 10px -correction;
+  margin-bottom: 75px;
+  width: 66%;
+}
+aside {
+  display: inline;
+  float: left;
+  overflow: hidden;
+  width: 300px;
+  margin: 0 10px;
+  *width: 300px -correction;
+  *margin: 0 10px -correction;
+  height: 100%;
+  min-width: 300px;
+  width: 20%;
+}
+body {
+  margin-top: 15px;
+  font-size: 22px;
+  line-height: 1.4;
+}
+font-family "PT Serif",
+"Helvetica Neue",
+Helvetica,
+Arial,
+sans-serif,
+body,
+aside {
+  padding: 15px 15px 15px 10px;
+}
+button {
+  border-radius: 5px;
+  background: #555;
+  border: none;
+}
+header {
+  width: 75%;
+  margin: 0 auto;
+  background: #f00;
+  font-size: 3em;
+}
+header h1 {
+  font-size: 4em;
+}
+img {
+  margin: 0 auto;
+  display: block;
+}
+label {
+  margin-right: 15px;
+}
+.right {
+  float: right;
+}
+@media screen and (max-width: 960px) {
+  article {
+    width: 90%;
+  }
+  aside {
+    min-width: 95%;
+  }
+  header {
+    font-size: 1em;
+  }
+}
