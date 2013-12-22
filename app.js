@@ -100,7 +100,7 @@ app.configure(function() {
   app.use(express.session({ secret: 'wodemima' }));
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(require('stylus').middleware({ src: __dirname + '/public' }));
+  app.use(require('stylus').middleware({ src: __dirname + '/public/stylesheets' }));
   app.use(app.router);
 });
 
@@ -148,7 +148,6 @@ Application, bitches!
 
 app.get('/', function(req, res) {
   var user = (req.user) ? req.user : undefined;
-  console.log(req.user);
   res.render('index', {
       'title': 'Amanuens.is',
       'user':user
@@ -163,9 +162,10 @@ app.get('/signup', function(req, res){
 });
 
 app.post('/signup', function(req, res) {
+  var reserved = ["login","logout","signup","search","add"];
   User.findOne({ username: req.body.username }, function (err, user) {
     if (err) { return console.log(err); }
-    if (user) {
+    if (user || reserved.indexOf(req.body.username) !== -1) {
       res.render('signup', {
         message: 'That username already exists.',
         user: {}
@@ -252,6 +252,17 @@ app.post('/add', ensureAuthenticated,
   }
 );
 
+app.get('/search/:tag', function(req, res){
+  var re = new RegExp(req.params.tag,"gi");
+  Entry.find({$or: [
+    {tags: re}, {entry: re}, {meaning: re}, {source: re}
+  ]}).populate('user').exec(function(err, entries){
+      res.render('search.jade', {
+      entries: entries
+    });
+  });
+});
+
 app.get('/:id', function(req, res) {
   User.findOne({username: req.params.id}).populate("entries").exec(function(err, user){
     if(!user || err) {
@@ -282,6 +293,7 @@ app.get('/:id/:entryId/edit', ensureAuthenticated,
   function(req, res) {
     res.json(req.user);
 });
+
 
 //From stack overflowwww
 // app.use(function(req, res, next){

@@ -1,11 +1,25 @@
+!!!
 html(lang='en')
   head
     title= title 
     meta(name="viewport",content="width=device-width, initial-scale=1.0", charset="UTF-8")
+    link(rel='stylesheet', href='/stylesheets/normalize.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
 
-    block stylesheets
-      link(rel='stylesheet', href='/stylesheets/style.css')
   body
+    header
+      a(href="logout") 
+      | logout&nbsp;
+      | #{user}
+      br
+      - if (typeof(user) !== 'undefined'){
+        | #{user.username}
+      -}
+
+    article
+      block content
+    aside
+      block side
     div
     | HI -
     a(href="logout") 
@@ -15,5 +29,3 @@ html(lang='en')
     - if (typeof(user) !== 'undefined'){
       | #{user.username}
     -}
-
-    block auth
