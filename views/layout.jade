@@ -5,23 +5,26 @@ html(lang='en')
     meta(name="viewport",content="width=device-width, initial-scale=1.0", charset="UTF-8")
     link(rel='stylesheet', href='/stylesheets/normalize.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='shortcut icon', href='favicon.ico')
+
 
   body
     aside
-      img(src="/images/logo.png")
+      a(href="/")
+        img(src="/images/logo.png")
       - if (typeof(user) !== 'undefined'){
-          a(href="logout") Logout
+          a(href="logout").menu Logout, #{user.username}
+          a(href="add").menu.right Add
       -} else {
-          a(href="login")#login-button Login
-          a(href="signup")#signup-button.right Sign-up
-          div#login
+          span(data-hide="signup")#login.toggle.button Login
+          span(data-hide="login")#signup.right.toggle.button Sign-up
+          div
             include login
-          div#signup
             include signup
+            hr#divider
       -}
       block side
     article
-      | Stuff
       block content
 
-    block auth
+  script(type='text/javascript', src='/javascripts/events.js')

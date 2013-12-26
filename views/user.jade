@@ -1,5 +1,9 @@
-h1 #{user.username}
+extends layout
 
-each entry in user.entries
-	p #{entry.entry}, #{entry.meaning}
-		a(href="#{user.username}/#{entry.slug}") link
+block content
+	h1 #{selectedUser.username}
+
+	h3 User Entries
+
+	each entry in selectedUser.entries
+		include partials/entry-partial

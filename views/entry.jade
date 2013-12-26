@@ -1,4 +1,4 @@
-h1 #{user.username}
-h1 #{entry.entry}
+extends layout
 
-p #{entry.entry}, #{entry.meaning}
+block content
+	include partials/entry-partial.jade

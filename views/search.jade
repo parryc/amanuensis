@@ -1,3 +1,10 @@
-each entry in entries
-	p #{entry.entry}, #{entry.meaning}
-		a(href="/#{entry.user.username}/#{entry.slug}") link
+extends layout
+
+block content
+	- if(!results) {
+	h1 No results
+	- } else {
+	h1 Results
+	each entry in entries
+		include partials/entry-partial
+	- }

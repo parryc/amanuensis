@@ -1,6 +1,14 @@
 extends layout
 
 block content
-  input(type="text")#search
+  form(action="/search", method="post")
+    input(type='hidden', name='_csrf', value="#{csrf_token}")
+
+    input#query(type='text', name="query", placeholder='Enter something!')
+    br
+    button(type='submit') Search!
+
+  h1 Recent Entries
+
   each entry in entries
     include partials/entry-partial

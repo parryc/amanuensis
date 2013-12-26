@@ -1,9 +1,22 @@
 @import 'grid'
 
+$blue = #3892E3
+$lightAccent = #D8E0E8
+
+a
+	text-decoration none
+	color $blue
+a.menu
+	color black
+
+a:hover
+	color black
+
 article
 	column(8)
 	margin-bottom 75px
 	width 66%
+	margin-left 50px
 
 aside
 	column(4)
@@ -16,15 +29,37 @@ body
 	margin-top 15px
 	font-size 22px
 	line-height 1.4
- 	font-family "PT Serif","Helvetica Neue", Helvetica, Arial, sans-serif
+ 	font-family "PT Serif" "Helvetica Neue" Helvetica Arial sans-serif
 
 body,aside
 	padding 15px 15px 15px 10px
 
+// From Bootstrap, with tweaks
 button
-	border-radius 5px
-	background #555
-	border none
+	background $blue
+	display inline-block
+	padding 3px 6px
+	margin-bottom 0
+	margin-top 15px
+	font-size 18px
+	font-weight normal
+	line-height 1.4
+	text-align center
+	white-space nowrap
+	vertical-align middle
+	cursor pointer
+	-webkit-user-select none
+	 -moz-user-select none
+	  -ms-user-select none
+	   -o-user-select none
+	      user-select none
+	background-image none
+	border 1px solid transparent
+	border-radius 4px
+
+button:hover
+	text-shadow 1px 1px 0 black
+
 
 header
 	width 75%
@@ -38,17 +73,82 @@ img
 	margin 0 auto
 	display block
 
+input[type="text"]
+	width: 250px
+
 label
 	margin-right 15px
 
+.button
+	cursor pointer
+	-webkit-touch-callout none
+	-webkit-user-select none
+	-khtml-user-select none
+	-moz-user-select none
+	-ms-user-select none
+	user-select none
+
+a.menu:hover, .button:hover
+	color white
+	background black
+
+.hidden
+	display none
+
 .right
 	float right
+// ***********
+// Entry
+// ***********
+
+.entry-block:nth-child(even)
+	border-left $lightAccent solid 5px
+	padding-left 10px
+
+.entry-block
+	padding 15px
+
+.entry
+	font-weight bold
+
+.permalink
+	margin-top -15px
+	font-size .5em
+
+.source
+	font-size .8em
+	font-style italic
+
+.tag
+	display inline-block
+	margin-bottom 5px
+	margin-right 10px
+	padding 3px 6px
+	min-width 10px
+	text-align center
+	font-family Monaco, "Liberation Mono", Courier, monospace
+	background #EEE
+	color rgb(111,176,235)
+	border-radius 2px
+	text-shadow 1px 1px 0 black
+	word-break break-all
+	cursor pointer
+
+.tag:hover
+	color black
+
+#divider
+	display none
 
 @media screen and (max-width: 960px)
 	article
 		// column(12)
 		width 90%
+		margin-left 10px
+		margin-top 25px
 	aside
 		min-width 95%
 	header
 		font-size 1em
+	#divider
+		display inherit

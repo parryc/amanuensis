@@ -1,1 +1,17 @@
-#{entry.entry}, #{entry.meaning}
+div.entry-block
+	h2 #{entry.entry}
+	div.meaning #{entry.meaning}
+	div.source (#{entry.source})
+	each tag in entry.tags
+		.tag 
+			a(href="/search/#{tag}") #{tag}
+	br
+	- if (typeof(selectedUser) !== 'undefined'){
+			a(href="#{selectedUser.username}").permalink #{selectedUser.username}
+			span.permalink &nbsp;&mdash;&nbsp;
+			a(href="#{selectedUser.username}/#{entry.slug}").permalink Permalink
+	-} else {
+			a(href="#{entry.user.username}").permalink #{entry.user.username}
+			span.permalink &nbsp;&mdash;&nbsp;
+			a(href="#{entry.user.username}/#{entry.slug}").permalink Permalink
+	-}

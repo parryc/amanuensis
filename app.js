@@ -148,7 +148,7 @@ Application, bitches!
 
 app.get('/', function(req, res) {
   var user = (req.user) ? req.user : undefined;
-  Entry.find().sort({_creationDate:-1}).limit(10).exec(function(err, entries){
+  Entry.find().sort({_creationDate:-1}).limit(10).populate("user").exec(function(err, entries){
     res.render('index', {
       title: 'Amanuens.is',
       user:user,
@@ -220,7 +220,8 @@ app.post('/login',
 app.get('/add', ensureAuthenticated,
   function(req, res) {
     res.render('add.jade', {
-      'title': 'Amanuens.is - Add'
+      title: 'Amanuens.is - Add',
+      user: req.user
     });
   }
 );
@@ -255,25 +256,32 @@ app.post('/add', ensureAuthenticated,
   }
 );
 
-app.get('/search/:tag', function(req, res){
-  var re = new RegExp(req.params.tag,"gi");
+app.get('/search/:query', function(req, res){
+  var re = new RegExp(req.params.query,"gi");
   Entry.find({$or: [
     {tags: re}, {entry: re}, {meaning: re}, {source: re}
   ]}).populate('user').exec(function(err, entries){
       res.render('search.jade', {
-      entries: entries
+      entries: entries,
+      results: (entries.length !== 0)
     });
   });
 });
 
+app.post('/search', function(req, res){
+  return res.redirect('/search/'+req.body.query);
+});
+
 app.get('/:id', function(req, res) {
-  User.findOne({username: req.params.id}).populate("entries").exec(function(err, user){
-    if(!user || err) {
+  User.findOne({username: req.params.id}).populate("entries").exec(function(err, selectedUser){
+    if(!selectedUser || err) {
       res.redirect('/');
     } else {
+      selectedUser.entries.reverse();
       res.render('user.jade', {
-        title: 'Amanuens.is - Id',
-        user: user
+        title: 'Amanuens.is - '+selectedUser.username,
+        user: req.user,
+        selectedUser: selectedUser
       });
     }
   });
@@ -281,12 +289,13 @@ app.get('/:id', function(req, res) {
 
 
 app.get('/:id/:entryId', function(req, res) {
-  User.findOne({username: req.params.id}).populate('entries').exec(function(err, user){
+  User.findOne({username: req.params.id}).populate('entries').populate("user").exec(function(err, selectedUser){
     Entry.findOne({slug: req.params.slug}, function(err, entry){
       res.render('entry.jade', {
         title: 'Amanuens.is - Entry',
         entry: entry,
-        user: user
+        user: req.user,
+        selectedUser: selectedUser
       });
     });
   });
