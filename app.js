@@ -11,13 +11,17 @@ var app = express(),
   LocalStrategy = require('passport-local').Strategy,
   mongoose = require('mongoose'),
   bcrypt = require('bcrypt'),
-  SALT_WORK_FACTOR = 10;
+  SALT_WORK_FACTOR = 10,
+  mongoLocation = process.env.MONGOLAB_URI;
 
+if(mongoLocation === undefined)
+  mongoLocation = 'mongodb://localhost:27017/amanuensis';
 
 /********************
 DEFINING THE DATABASE FOR GREAT SUCCESS!!
 ********************/
-mongoose.connect('mongodb://localhost:27017/amanuensis', function(err){
+
+mongoose.connect(mongoLocation, function(err){
   if (err)
     console.log("Error, Will Robinson, Error!: "+err);
 });
