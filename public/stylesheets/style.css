@@ -31,6 +31,7 @@ article {
   margin-bottom: 75px;
   width: 66%;
   margin-left: 50px;
+  padding: 15px;
 }
 aside {
   display: inline;
@@ -47,9 +48,11 @@ aside {
 body {
   margin-top: 15px;
   font-size: 22px;
+  background: #f5f5f5;
+  color: #222;
   line-height: 1.4;
+  overflow-x: hidden;
 }
-font-family "PT Serif""Helvetica Neue"Helvetica Arial sans-serif,
 body,
 aside {
   padding: 15px 15px 15px 10px;
@@ -59,10 +62,10 @@ button {
   display: inline-block;
   padding: 3px 6px;
   margin-bottom: 0;
-  margin-top: 15px;
+  margin-top: -4px;
   font-size: 18px;
   font-weight: normal;
-  line-height: 1.4;
+  line-height: 1.15;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
@@ -74,7 +77,7 @@ button {
   user-select: none;
   background-image: none;
   border: 1px solid transparent;
-  border-radius: 4px;
+  margin-left: 5px;
 }
 button:hover {
   text-shadow: 1px 1px 0 #000;
@@ -118,12 +121,34 @@ a.menu:hover,
 .right {
   float: right;
 }
-.entry-block:nth-child(even) {
-  border-left: #d8e0e8 solid 5px;
-  padding-left: 10px;
+.left {
+  float: left;
+}
+.top-bar {
+  position: absolute;
+  height: 15px;
+  top: 0;
+  left: 0;
+  background: #222;
+  width: 100%;
+}
+.entry-block,
+.box {
+  border: 1px solid #7fb6e8;
+  padding: 20px;
+  background: #fff;
 }
 .entry-block {
-  padding: 15px;
+  width: 40%;
+  height: 200px;
+  margin: 10px;
+}
+.entry-block div {
+  margin-top: 4px;
+}
+.entry-page .entry-block {
+  min-height: inherit;
+  width: 90%;
 }
 .entry {
   font-weight: bold;
@@ -158,12 +183,16 @@ a.menu:hover,
   display: none;
 }
 @media screen and (max-width: 960px) {
+  body {
+    padding-left: 0;
+  }
   article {
     width: 90%;
-    margin-left: 10px;
+    margin-left: 0;
     margin-top: 25px;
   }
   aside {
+    padding: 15px 0 0 0;
     min-width: 95%;
   }
   header {
@@ -171,5 +200,9 @@ a.menu:hover,
   }
   #divider {
     display: inherit;
+  }
+  .entry-block {
+    width: 90%;
+    margin-left: 0;
   }
 }

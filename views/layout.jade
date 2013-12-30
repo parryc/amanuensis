@@ -9,6 +9,7 @@ html(lang='en')
 
 
   body
+    div.top-bar
     aside
       a(href="/")
         img(src="/images/logo.png")
@@ -16,12 +17,13 @@ html(lang='en')
           a(href="logout").menu Logout, #{user.username}
           a(href="add").menu.right Add
       -} else {
+          br
           span(data-hide="signup")#login.toggle.button Login
           span(data-hide="login")#signup.right.toggle.button Sign-up
-          div
+          div.box#login-target.hidden
             include login
+          div.box#signup-target.hidden
             include signup
-            hr#divider
       -}
       block side
     article

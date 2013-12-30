@@ -292,7 +292,7 @@ app.get('/:id', function(req, res) {
 });
 
 
-app.get('/:id/:entryId', function(req, res) {
+app.get('/:id/:slug', function(req, res) {
   User.findOne({username: req.params.id}).populate('entries').populate("user").exec(function(err, selectedUser){
     Entry.findOne({slug: req.params.slug}, function(err, entry){
       res.render('entry.jade', {
@@ -305,7 +305,7 @@ app.get('/:id/:entryId', function(req, res) {
   });
 });
 
-app.get('/:id/:entryId/edit', ensureAuthenticated,
+app.get('/:id/:slug/edit', ensureAuthenticated,
   function(req, res) {
     res.json(req.user);
 });

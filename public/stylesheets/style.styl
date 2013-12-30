@@ -1,7 +1,14 @@
 @import 'grid'
 
 $blue = #3892E3
+$lightBlue = #7FB6E8
 $lightAccent = #D8E0E8
+$textColor = #222222
+
+boxed()
+	border 1px solid $lightBlue
+	padding 20px
+	background white 
 
 a
 	text-decoration none
@@ -17,6 +24,8 @@ article
 	margin-bottom 75px
 	width 66%
 	margin-left 50px
+	padding 15px
+
 
 aside
 	column(4)
@@ -28,8 +37,11 @@ aside
 body
 	margin-top 15px
 	font-size 22px
+	background #F5F5F5
+	color $textColor
 	line-height 1.4
- 	font-family "PT Serif" "Helvetica Neue" Helvetica Arial sans-serif
+	overflow-x hidden
+
 
 body,aside
 	padding 15px 15px 15px 10px
@@ -40,10 +52,10 @@ button
 	display inline-block
 	padding 3px 6px
 	margin-bottom 0
-	margin-top 15px
+	margin-top -4px
 	font-size 18px
 	font-weight normal
-	line-height 1.4
+	line-height 1.15
 	text-align center
 	white-space nowrap
 	vertical-align middle
@@ -55,7 +67,7 @@ button
 	      user-select none
 	background-image none
 	border 1px solid transparent
-	border-radius 4px
+	margin-left 5px
 
 button:hover
 	text-shadow 1px 1px 0 black
@@ -97,16 +109,40 @@ a.menu:hover, .button:hover
 
 .right
 	float right
+
+.left
+	float left
+
+.top-bar
+	position absolute
+	height 15px
+	top 0
+	left 0
+	background $textColor
+	width 100%
+
 // ***********
 // Entry
 // ***********
 
-.entry-block:nth-child(even)
-	border-left $lightAccent solid 5px
-	padding-left 10px
+// .entry-block:nth-child(even)
+// 	border-left $lightAccent solid 5px
+// 	padding-left 10px
+
+.entry-block, .box
+	boxed()
 
 .entry-block
-	padding 15px
+	width 40%
+	height 200px
+	margin 10px
+	div
+		margin-top 4px
+
+.entry-page
+	.entry-block
+		min-height inherit
+		width 90%
 
 .entry
 	font-weight bold
@@ -141,14 +177,20 @@ a.menu:hover, .button:hover
 	display none
 
 @media screen and (max-width: 960px)
+	body
+		padding-left 0
 	article
 		// column(12)
 		width 90%
-		margin-left 10px
+		margin-left 0
 		margin-top 25px
 	aside
+		padding 15px 0 0 0
 		min-width 95%
 	header
 		font-size 1em
 	#divider
 		display inherit
+	.entry-block
+		width 90%
+		margin-left 0
